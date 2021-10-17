@@ -1,8 +1,11 @@
-import { createApp } from 'vue'
-import ExampleComponent from './components/ExampleComponent.vue';
+import {createApp} from 'vue'
 
-const app = createApp({});
-app.component('example-component', ExampleComponent)
-    .mount('#app');
+require('./bootstrap')
+import App from './App.vue'
+import axios from 'axios'
+import router from './router'
 
-require('./bootstrap');
+const app = createApp(App)
+app.config.globalProperties.$axios = axios;
+app.use(router)
+app.mount('#app')

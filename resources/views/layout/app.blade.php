@@ -34,8 +34,15 @@
     <script>
     @auth
         window.Permissions = {!! json_encode(Auth::user()->allPermissions, true) !!};
+        window.Laravel = {!!json_encode([
+            'isLoggedin' => true,
+            'user' => Auth::user()
+        ])!!}
     @else
         window.Permissions = [];
+        window.Laravel = {!!json_encode([
+            'isLoggedin' => false
+        ])!!}
     @endauth
     </script>
 
