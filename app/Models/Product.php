@@ -18,4 +18,12 @@ class Product extends Model
         'sku',
         'name',
     ];
+
+    /**
+     * The users who purchased the product.
+     */
+    public function buyers()
+    {
+        return $this->belongsToMany(User::class, 'purchases', 'product_sku', 'user_id');
+    }
 }
