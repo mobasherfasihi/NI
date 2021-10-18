@@ -7,12 +7,14 @@ use App\Models\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
+use Laravel\Sanctum\Sanctum;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    // use RefreshDatabase;
+    use RefreshDatabase;
     use WithFaker;
 
     /** @var \App\Http\Requests\LoginRequest */
@@ -96,13 +98,27 @@ class UserTest extends TestCase
      */
     public function it_should_allow_user_to_login() 
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'email' => 'mobasher@gmail.com',
+            'password' => bcrypt('password')
+        ]);
 
-        $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'password']);
-        
-        $response
-            ->assertOk()
-            ->assertJson(['data' => ['name' => $user->name]]);
+        $loginData = ['email' => 'mobasher@gmail.com', 'password' => 'password'];
+
+        $response = $this->json('POST', 'api/auth', $loginData)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                "data" => [
+                    'token',
+                    'user' => [
+                        'name',
+                    ]
+                ],
+                "success",
+                "message"
+             ]);
+
+        $this->assertAuthenticated();     
     }
 
     /**
@@ -112,11 +128,9 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->json('POST', 'api/auth', ['email' => 'new'.$user->email, 'password' => 'password']);
-        
-        $response
+        $response = $this->json('POST', 'api/auth', ['email' => 'new'.$user->email, 'password' => 'password'])
             ->assertUnauthorized()
-            ->assertStatus(401);
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -126,10 +140,22 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'new-password']);
-        
-        $response
+        $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'new-password'])
             ->assertUnauthorized()
-            ->assertStatus(401);
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_auth_user_details() 
+    {
+        $this->withoutExceptionHandling();
+        $user = Sanctum::actingAs(User::factory()->create(), ['api']);
+        
+        $response = $this->json('GET', 'api/user');
+        
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJson(['data' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email]]);
     }
 }

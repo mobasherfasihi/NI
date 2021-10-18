@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::get('/user', [UserController::class, 'authDetails'])->middleware('auth:sanctum');
