@@ -96,8 +96,6 @@ class UserTest extends TestCase
      */
     public function it_should_allow_user_to_login() 
     {
-        $this->withoutExceptionHandling();
-
         $user = User::factory()->create();
 
         $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'password']);
@@ -105,5 +103,33 @@ class UserTest extends TestCase
         $response
             ->assertOk()
             ->assertJson(['data' => ['name' => $user->name]]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_prevent_user_to_login_with_invalid_email() 
+    {
+        $user = User::factory()->create();
+
+        $response = $this->json('POST', 'api/auth', ['email' => 'new'.$user->email, 'password' => 'password']);
+        
+        $response
+            ->assertUnauthorized()
+            ->assertStatus(401);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_prevent_user_to_login_with_invalid_password() 
+    {
+        $user = User::factory()->create();
+
+        $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'new-password']);
+        
+        $response
+            ->assertUnauthorized()
+            ->assertStatus(401);
     }
 }

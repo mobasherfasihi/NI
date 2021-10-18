@@ -24,7 +24,7 @@ class UserController extends Controller
             return $this->sendResponse($success, 'User logged in successfully.', 200);
         } 
         else{ 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised'], 401);
+            return $this->sendError('Unauthorised.', ['error'=>'Your email or password is incorrect'], 401);
         } 
     }
 }
