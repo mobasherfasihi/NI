@@ -41,4 +41,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The products that purchased the user.
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'purchases', 'user_id', 'product_sku');
+    }
 }
