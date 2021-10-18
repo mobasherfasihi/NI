@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
 
 class Controller extends BaseController
 {
@@ -16,7 +17,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendResponse(array $result, string $message)
+    public function sendResponse(array $result, string $message, $code = 200)
     {
     	$response = [
             'success' => true,
@@ -25,7 +26,7 @@ class Controller extends BaseController
         ];
 
 
-        return response()->json($response, 200);
+        return response()->json($response, $code);
     }
 
 

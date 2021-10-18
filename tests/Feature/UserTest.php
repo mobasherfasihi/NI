@@ -3,14 +3,17 @@
 namespace Tests\Feature;
 
 use App\Http\Requests\LoginRequest;
+use App\Models\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\CreatesApplication;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
+    use WithFaker;
 
     /** @var \App\Http\Requests\LoginRequest */
     private $rules;
@@ -86,5 +89,21 @@ class UserTest extends TestCase
         return $this->validator
             ->make($mockedRequestData, $this->rules)
             ->passes();
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_allow_user_to_login() 
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+
+        $response = $this->json('POST', 'api/auth', ['email' => $user->email, 'password' => 'password']);
+        
+        $response
+            ->assertOk()
+            ->assertJson(['data' => ['name' => $user->name]]);
     }
 }
