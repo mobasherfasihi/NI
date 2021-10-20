@@ -134,9 +134,9 @@ class SlugAction
 
         if ($this->model::where($attribute, $slug)->exists()) {
 
-            $max = $this->model::where($attribute, $source)->latest('id')->skip(1)->value($attribute);
-
-            if (is_numeric($max[-1])) {
+            $max = $this->model::where($attribute, $slug)->latest('id')->value($attribute);
+            
+            if ($max && is_numeric($max[-1])) {
                 return preg_replace_callback('/(\d+)$/', function ($matches) {
                     return $matches[1] + 1;
                 }, $max);
@@ -152,7 +152,7 @@ class SlugAction
      *
      * @return $this
      */
-    public function defineModel(Model $model)
+    public function defineModel(Model $model): static
     {
         $this->model = $model;
 
