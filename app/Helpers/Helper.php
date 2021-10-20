@@ -30,4 +30,9 @@ class Helper {
 
         return false;
     }
+
+    public static function constants($key)
+    {
+       return config('app.constants.' . $key);
+    }
 }
