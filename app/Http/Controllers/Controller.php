@@ -17,7 +17,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendResponse(array|object $result, string $message, $code = 200)
+    public function sendResponse(array|object|null $result, string $message, $code = 200)
     {
     	$response = [
             'success' => true,

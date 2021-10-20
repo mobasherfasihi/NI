@@ -134,10 +134,7 @@ class SlugAction
         $slug = Str::slug($source);
         if ($this->model::where($attribute, $slug)->exists()) {
             $max = $this->model::where($config['source'], $source)->latest('id')->limit(1)->value('sku');
-            // if($max) {
-            //     print_r([$max[-1], "{$slug}-2"]);
-            //     print_r($this->model->where('sku', "{$slug}-2")->get()->toArray());
-            // }
+            
             if (isset($max[-1]) && is_numeric($max[-1])) {
                 return preg_replace_callback('/(\d+)$/', function($matches) {
                     return $matches[1] + 1;

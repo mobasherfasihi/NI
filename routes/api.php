@@ -19,7 +19,12 @@ Route::post('register', [UserController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function() {
     Route::post('logout', [UserController::class, 'logout']);
 
-    Route::get('user', [UserController::class, 'authDetails']);
+    Route::prefix('user')->group(function() {
+        Route::get('', [UserController::class, 'authDetails']);
+        Route::get('products', [UserController::class, 'products']);
+        Route::post('products', [UserController::class, 'purchase']);
+        Route::delete('products/{product:sku}', [UserController::class, 'deleteProduct']);
+    });
 
     Route::get('products', [ProductController::class, 'index']);
 });
