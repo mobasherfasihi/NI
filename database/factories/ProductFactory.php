@@ -22,8 +22,7 @@ class ProductFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $name = $this->faker->word,
-            'sku' => $this->faker->unique()->sku($name)
+            'name' => $name = $this->faker->word
         ];
     }
 }

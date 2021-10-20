@@ -3,8 +3,14 @@
 namespace Tests\Feature;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\Product;
+use App\Models\User;
+use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
+use Laravel\Sanctum\Sanctum;
+use ProductData;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -18,6 +24,8 @@ class ProductTest extends TestCase
     /** @var \Illuminate\Validation\Validator */
     private $validator;
 
+    private $products;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -25,6 +33,8 @@ class ProductTest extends TestCase
         $this->validator = app()->get('validator');
 
         $this->rules = (new ProductRequest())->rules();
+
+        $this->products = Product::factory()->count(24)->create();
     }
 
     public function validationProvider()
@@ -33,35 +43,20 @@ class ProductTest extends TestCase
         $faker = Factory::create( Factory::DEFAULT_LOCALE);
 
         return [
-            'request_should_fail_when_no_email_is_provided' => [
+            'request_should_fail_when_no_product_name_is_provided' => [
+                'passed' => false,
+                'data' => []
+            ],
+            'request_should_fail_when_product_name_is_not_string' => [
                 'passed' => false,
                 'data' => [
-                    'password' => $faker->password()
+                    'name' => 1234
                 ]
             ],
-            'request_should_fail_when_no_password_is_provided' => [
+            'request_should_fail_when_product_name_is_less_than_3_characters' => [
                 'passed' => false,
                 'data' => [
-                    'email' => $faker->email()
-                ]
-            ],
-            'request_should_fail_when_email_is_invalid_format' => [
-                'passed' => false,
-                'data' => [
-                    'email' => $faker->word()
-                ]
-            ],
-            'request_should_fail_when_password_is_less_than_6_characters' => [
-                'passed' => false,
-                'data' => [
-                    'password' => $faker->password($minLength = 2, $maxLength = 4)
-                ]
-            ],
-            'request_should_pass_when_data_is_provided' => [
-                'passed' => true,
-                'data' => [
-                    'email' => $faker->email(),
-                    'password' => $faker->password($minLength = 6, $maxLength = 10)
+                    'name' => 'my'
                 ]
             ]
         ];
@@ -86,5 +81,24 @@ class ProductTest extends TestCase
         return $this->validator
             ->make($mockedRequestData, $this->rules)
             ->passes();
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_all_products_in_paginated_list() 
+    {
+        $this->withoutExceptionHandling();
+        Sanctum::actingAs(
+            User::factory()->create(),
+            ['api']
+        );
+
+        $response = $this->json('GET', 'api/products');
+        
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(10, 'data.data')
+            ->assertJsonFragment(['total' => 24]);
     }
 }

@@ -231,4 +231,12 @@ return [
         'Helper' => App\Helpers\Helper::class,
     ],
 
+
+
+    /**
+     * Per page constant
+     */
+    'constants' => [
+        'PER_PAGE' => 10
+    ]
 ];

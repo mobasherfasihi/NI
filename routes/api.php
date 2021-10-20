@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/auth', [UserController::class, 'login']);
+Route::post('auth', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
-Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function() {
+    Route::post('logout', [UserController::class, 'logout']);
 
-Route::get('/user', [UserController::class, 'authDetails'])->middleware('auth:sanctum');
+    Route::get('user', [UserController::class, 'authDetails']);
+
+    Route::get('products', [ProductController::class, 'index']);
+});

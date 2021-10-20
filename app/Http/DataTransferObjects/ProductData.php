@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Carbon;
 
-class SuccessMessage
+class ProductData
 {
     public function __construct(
+        public int $id,
         public string $name,
-        public string $mail,
-        public Carbon $birthDate,
+        public string $sku,
     )
     {}
 

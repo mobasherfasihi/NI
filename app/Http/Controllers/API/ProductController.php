@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\Helper;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
@@ -15,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return $this->sendResponse(Product::paginate(Helper::constants('PER_PAGE')), 'Records Retrieved Successfully.', Response::HTTP_OK);
     }
 
     /**
