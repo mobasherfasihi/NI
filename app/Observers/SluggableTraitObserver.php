@@ -27,9 +27,9 @@ class SluggableTraitObserver
      /**
      * @param \Illuminate\Database\Eloquent\Model $model
      * 
-     * @return boolean|void
+     * @return void
      */
-    protected function generateSlug(Model $model): bool|void
+    protected function generateSlug(Model $model): void
     {
         $this->slugAction->slug($model);
     }
