@@ -20,8 +20,6 @@ class Product extends Model
         'name',
     ];
 
-    // protected $primaryKey = 'sku';
-
     /**
      * Return the sluggable configuration array for this model.
      *
@@ -44,12 +42,4 @@ class Product extends Model
     {
         return $this->belongsToMany(User::class, 'purchases', 'product_sku', 'user_id');
     }
-
-    // public function getKeyName() {
-    //     return 'sku';
-    // }
-    
-    // public function getKey() {
-    //     return $this->id;
-    // }
 }

@@ -16,10 +16,6 @@ class SlugAction
     protected $model;
 
     /**
-     * 
-     */
-
-    /**
      * Slug the current model.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
